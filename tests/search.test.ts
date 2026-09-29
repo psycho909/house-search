@@ -34,3 +34,224 @@ test("search request bodies are capped at 512 bytes", async () => {
   const response = await post(JSON.stringify({ city: "x".repeat(600), district: "新莊區" }));
   assert.equal(response.status, 413);
 });
+
+test("active building age range excludes listings with unknown age", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { buildingAge: { min: 0, max: 40 } },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(result.excludedBecauseUnknown, 1);
+  assert.ok(result.listings.every((listing: { buildingAge?: number }) => typeof listing.buildingAge === "number"));
+});
+
+test("parking none matches explicit false and counts unknown parking", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { parking: "none" },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(result.listings.map((listing: { id: string }) => listing.id), ["fixture-3"]);
+  assert.ok(result.listings.every((listing: { hasParking?: boolean }) => listing.hasParking === false));
+  assert.equal(result.excludedBecauseUnknown, 1);
+});
+
+test("keyword matches a community after NFKC, whitespace, and case normalization", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { keyword: "  ＭＡＰＬＥ　ＣＯＵＲＴ " },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(result.listings.map((listing: { id: string }) => listing.id), ["fixture-3"]);
+});
+
+test("same-source listing ID keeps only its newest verified fixture", async () => {
+  const response = await post(JSON.stringify({ city: "新北市", district: "新莊區", filters: {} }));
+  const result = await response.json();
+  const sourceListings = result.listings.filter(
+    (listing: { sourceId: string }) => listing.sourceId === "synthetic-source-a",
+  );
+
+  assert.deepEqual(sourceListings.map((listing: { id: string }) => listing.id), ["fixture-1"]);
+  assert.equal(sourceListings[0].updatedAt, "2026-09-28T12:00:00.000Z");
+});
+
+test("likely cross-source duplicate keeps both synthetic listing URLs", async () => {
+  const response = await post(JSON.stringify({ city: "新北市", district: "新莊區", filters: {} }));
+  const result = await response.json();
+  const possibleDuplicates = result.listings.filter(
+    (listing: { possibleDuplicate?: boolean }) => listing.possibleDuplicate === true,
+  );
+
+  assert.deepEqual(possibleDuplicates.map((listing: { id: string }) => listing.id), ["fixture-1", "fixture-2"]);
+  assert.deepEqual(possibleDuplicates.map((listing: { url: string }) => listing.url), [
+    "https://source-a.synthetic.invalid/listing/a-001",
+    "https://source-b.synthetic.invalid/listing/b-001",
+  ]);
+  assert.ok(possibleDuplicates.every((listing: { sourceLabel: string }) => listing.sourceLabel.includes("合成")));
+});
+
+test("total price range includes both endpoints", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { totalPrice: { min: 1580, max: 1660 } },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(result.listings.map((listing: { id: string }) => listing.id), ["fixture-1", "fixture-2"]);
+});
+
+test("building area range includes exact endpoints", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { buildingArea: { min: 32.5, max: 32.5 } },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(result.listings.map((listing: { id: string }) => listing.id), ["fixture-1"]);
+});
+
+test("unit price range includes both endpoints and excludes missing values", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { unitPrice: { min: 48.6, max: 50.4 } },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(result.listings.map((listing: { id: string }) => listing.id), ["fixture-1", "fixture-3"]);
+  assert.equal(result.excludedBecauseUnknown, 1);
+});
+
+test("unknown count only includes listings that could otherwise match", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: {
+      keyword: "住宅 C",
+      totalPrice: { min: 2000 },
+      buildingAge: { min: 0 },
+    },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(result.listings, []);
+  assert.equal(result.excludedBecauseUnknown, 0);
+});
+
+test("room options use OR matching", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { rooms: [2, 3] },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(result.listings.map((listing: { id: string }) => listing.id), [
+    "fixture-1",
+    "fixture-2",
+    "fixture-3",
+  ]);
+  assert.equal(result.excludedBecauseUnknown, 1);
+});
+
+test("active total price range excludes a missing price and counts it", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { totalPrice: { min: 0, max: 2000 } },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(result.excludedBecauseUnknown, 1);
+  assert.ok(result.listings.every((listing: { totalPrice?: number }) => typeof listing.totalPrice === "number"));
+});
+
+test("same-source canonical URL keeps the newest fixture despite a changed source ID", async () => {
+  const response = await post(JSON.stringify({ city: "新北市", district: "新莊區", filters: {} }));
+  const result = await response.json();
+  const sourceListings = result.listings.filter(
+    (listing: { sourceId: string }) => listing.sourceId === "synthetic-source-d",
+  );
+
+  assert.deepEqual(sourceListings.map((listing: { id: string }) => listing.id), ["fixture-4"]);
+  assert.equal(sourceListings[0].sourceListingId, "d-new");
+  assert.equal(sourceListings[0].url, "https://SOURCE-D.synthetic.invalid/listing/d-001/");
+  assert.equal(sourceListings[0].updatedAt, "2026-09-25T12:00:00.000Z");
+});
+
+test("active building area range excludes a missing area and counts it", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { buildingArea: { min: 0 } },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(result.excludedBecauseUnknown, 1);
+  assert.ok(result.listings.every((listing: { buildingArea?: number }) => typeof listing.buildingArea === "number"));
+});
+
+test("parking required excludes unknown while any leaves parking unfiltered", async () => {
+  const requiredResponse = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { parking: "required" },
+  }));
+  const required = await requiredResponse.json();
+  const anyResponse = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { parking: "any" },
+  }));
+  const any = await anyResponse.json();
+
+  assert.equal(requiredResponse.status, 200);
+  assert.deepEqual(required.listings.map((listing: { id: string }) => listing.id), [
+    "fixture-1",
+    "fixture-4",
+    "fixture-5",
+  ]);
+  assert.equal(required.excludedBecauseUnknown, 1);
+  assert.equal(anyResponse.status, 200);
+  assert.deepEqual(any.listings.map((listing: { id: string }) => listing.id), [
+    "fixture-1",
+    "fixture-2",
+    "fixture-3",
+    "fixture-4",
+    "fixture-5",
+  ]);
+  assert.equal(any.excludedBecauseUnknown, 0);
+});
+
+test("invalid ranges, room options, and unknown filters are rejected", async () => {
+  const invalidBodies = [
+    { totalPrice: { min: 2000, max: 1000 } },
+    { unitPrice: { max: Number.MAX_SAFE_INTEGER + 1 } },
+    { rooms: [2.5] },
+    { unsupported: true },
+  ];
+
+  for (const filters of invalidBodies) {
+    const response = await post(JSON.stringify({ city: "新北市", district: "新莊區", filters }));
+    assert.equal(response.status, 400);
+  }
+});

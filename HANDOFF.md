@@ -50,11 +50,11 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Next Ticket
 
-目前工作 [fixture 搜尋垂直路徑](tickets/20260929-fixture-search-slice.md) 已本機驗收，但為遵守其「部署 Out of Scope」，未推送任何分支；Vercel Git integration 會對 branch push 建立 Preview、對 `main` push 建立 Production。先由 Owner 決定是否修改該部署範圍。後續來源授權票可獨立處理，但取得授權前不啟用任何 live Adapter。
+目前工作 [篩選與保守去重](tickets/20260929-filter-dedup.md) 的本機實作、API 測試、typecheck、production build 與 L2 review 已完成；UI 瀏覽器 smoke test 尚未驗證。分支 `feature/filter-dedup` 包含尚未推送的 fixture 基底 commit；Vercel Git integration 會對 branch push 建立 Preview。先由 Owner 決定是否允許該 Preview，再同步分支。後續來源授權票可獨立處理，但取得授權前不啟用任何 live Adapter。
 
 ## Recommended Next Command
 
-在此倉庫執行 `git status --short --branch`，讀取 [.scratch handoff](.scratch/20260929-fixture-search-slice/handoff.md) 與目標 Ticket；不要 push，直到 Owner 明確決定部署範圍。
+在此倉庫執行 `git status --short --branch`，讀取 [.scratch handoff](.scratch/20260929-filter-dedup/handoff.md) 與目標 Ticket；不要 push，直到 Owner 明確決定部署範圍。
 
 ## Do Not Do
 
@@ -62,4 +62,4 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Verification
 
-本機驗證：`npm test` 3/3、`npm run typecheck`、`npm run build` 通過；瀏覽器搜尋新北市／新莊區顯示 1 筆合成 fixture。此為本機證據，未做遠端 push、Vercel deployment 或 live Adapter 測試。詳見 [fixture 搜尋票](tickets/20260929-fixture-search-slice.md)。
+本機驗證：`npm test` 18/18、`npm run typecheck`、`npm run build`、`git diff --check` 通過。API route 驗證篩選和去重；本票 UI 瀏覽器操作未確認，CUA 安全政策阻擋 localhost 存取。未做遠端 push、Vercel deployment 或 live Adapter 測試。詳見 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。

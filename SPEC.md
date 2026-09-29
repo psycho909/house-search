@@ -17,18 +17,20 @@ type Range = { min?: number; max?: number };
 interface PropertySearchQuery {
   city: string;             // 台灣縣市 canonical 名稱
   district: string;         // 必須屬於 city
-  keyword?: string;
-  totalPrice?: Range;       // 萬元
-  unitPrice?: Range;        // 萬元 / 坪
-  area?: Range;             // 建築面積，坪
-  rooms?: number[];         // 任一匹配；空陣列視為無條件
-  age?: Range;              // 年
-  buildingTypes?: string[]; // canonical 類型；具體字典待驗證
-  parking?: 'any' | 'required' | 'none';
+  filters: {
+    keyword?: string;
+    totalPrice?: Range;       // 萬元
+    unitPrice?: Range;        // 萬元 / 坪
+    buildingArea?: Range;     // 建築面積，坪
+    rooms?: number[];         // 任一匹配；空陣列視為無條件
+    buildingAge?: Range;     // 年
+    buildingTypes?: string[]; // canonical 類型；具體字典待驗證
+    parking?: 'any' | 'required' | 'none';
+  };
 }
 ```
 
-`min/max` 為含端點、非負有限數；`min > max` 拒絕。房數為非負整數且去重；字串 trim，空關鍵字視為未填。縣市與行政區清單要用明確、可更新的資料正本，不用前端自由字串暗示驗證成功。查詢大小與數值上限由 scaffold 票制定並測試。
+`min/max` 為含端點、非負且不超過 `Number.MAX_SAFE_INTEGER`；`min > max` 拒絕。房數為非負整數且去重；關鍵字先做 Unicode NFKC、空白壓縮及大小寫正規化，空關鍵字視為未填。搜尋 body 限制 512 bytes。房屋類型字典確認前，fixture 路徑不接受 `buildingTypes`。縣市與行政區清單要用明確、可更新的資料正本，不用前端自由字串暗示驗證成功。
 
 ## Property Schema
 
@@ -64,7 +66,7 @@ Adapter 擁有已驗證的欄位映射、請求、解析、單位轉換和來源
 
 ## Two-stage Filtering and Keyword
 
-Stage A 只映射該來源**已證實支援**的條件；每次查詢固定地域邊界，頁數和筆數有上限。Stage B 對所有候選重新驗證 city/district 和所有啟用條件。價格、面積、屋齡等若缺值，不能證明匹配，予以排除並統計 `excludedBecauseUnknown`；`parking: none` 僅在明確 `hasParking === false` 時匹配。`rooms` 是 OR，其他範圍為 AND；`parking: any` 不篩選。
+Stage A 只映射該來源**已證實支援**的條件；每次查詢固定地域邊界，頁數和筆數有上限。Stage B 對所有候選重新驗證 city/district 和所有啟用條件。價格、面積、屋齡等若缺值，不能證明匹配，予以排除；只有未因其他已知條件確定排除的候選才計入 `excludedBecauseUnknown`。`parking: none` 僅在明確 `hasParking === false` 時匹配。`rooms` 是 OR，其他範圍為 AND；`parking: any` 不篩選。
 
 關鍵字先做 Unicode 正規化、空白壓縮及不區分英文字母大小寫的字面匹配，檢查 `title`、`community`、`address` 及來源明確允許的描述 metadata；這些欄位皆無匹配時排除。不得依賴 `title.includes` 單一欄位，也不做 NLP、拼字猜測或依未取得的 metadata 宣稱無結果。若來源未提供完整候選集合，UI 標明只搜尋本次取得範圍。
 

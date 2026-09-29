@@ -4,16 +4,16 @@
 
 ## Now
 
-（無；目前核准的 fixture 搜尋票已完成本機驗收，等待部署範圍決策。）
+（無）
 
 ## Next
 
-- [ ] 篩選與保守去重 — Ticket: [20260929-filter-dedup](tickets/20260929-filter-dedup.md)
 - [ ] 響應式與錯誤狀態 — Ticket: [20260929-responsive-failures](tickets/20260929-responsive-failures.md)
 - [ ] 整合驗證與部署候選 — Ticket: [20260929-integration-release](tickets/20260929-integration-release.md)
 
 ## Blocked
 
+- [ ] 篩選與保守去重 — Ticket: [20260929-filter-dedup](tickets/20260929-filter-dedup.md)（本機實作與測試完成；UI 手測、Preview 範圍決策待處理）
 - [ ] Fixture 搜尋垂直路徑 — Ticket: [20260929-fixture-search-slice](tickets/20260929-fixture-search-slice.md)（本機完成；遠端 push 會觸發部署）
 - [ ] 確認來源使用授權 — Ticket: [20260929-source-permission](tickets/20260929-source-permission.md)
 - [ ] 591 Adapter — Ticket: [20260929-591-adapter](tickets/20260929-591-adapter.md)
