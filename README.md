@@ -1,6 +1,10 @@
 # 跨房屋交易網搜尋器
 
-台灣買屋搜尋 MVP 的規格與可行性專案。使用者以縣市、行政區及選填條件搜尋，系統在**取得來源授權與技術驗證後**，由伺服器整合可用來源的候選物件。現階段只有文件，**沒有可執行的搜尋器、即時資料或部署**。
+台灣買屋搜尋 MVP 的規格與可行性專案。使用者以縣市、行政區及選填條件搜尋，系統在**取得來源授權與技術驗證後**，由伺服器整合可用來源的候選物件。現階段只有文件，**沒有可執行的搜尋器或即時資料**。
+
+## Vercel 部署
+
+本倉庫的 `main` 已連接 [Vercel 專案](https://vercel.com/psycho909s-projects/house-search)，Production 網址為 [house-search-iota.vercel.app](https://house-search-iota.vercel.app/)。目前沒有網站入口，根路徑會顯示 404；Vercel 部署成功只代表 Git 建置管線可運作，不代表搜尋器已上線。後續 `main` push 的自動部署驗證進行中；實際狀態與 commit 請在 Vercel Deployments 核對。
 
 ## 快速開始
 
