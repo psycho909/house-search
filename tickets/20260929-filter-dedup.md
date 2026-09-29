@@ -1,6 +1,6 @@
 # 完成篩選與保守去重
 
-- Status: blocked
+- Status: accepted
 - Owner: 本專案請求者
 - Approver: 本專案請求者
 - Risk: L2
@@ -26,7 +26,7 @@ CHANGELOG.md、HANDOFF.md、SPEC.md、TODO.md、vercel.json、src/domain/、src/
 
 ## Acceptance
 
-- [ ] 缺欄位不會匹配啟用條件；關鍵字可匹配社區；跨來源疑似重複仍保留兩個連結。
+- [x] 缺欄位不會匹配啟用條件；關鍵字可匹配社區；跨來源疑似重複仍保留兩個連結。
 
 ## Test
 
@@ -40,10 +40,10 @@ CHANGELOG.md、HANDOFF.md、SPEC.md、TODO.md、vercel.json、src/domain/、src/
 
 ## Dependencies and Blockers
 
-依賴：fixture 搜尋路徑在本機基底 commit `5589551`。篩選實作、handoff 與 Vercel framework 修正已推送到 `origin/feature/filter-dedup`；修正 commit `96138e431a09e0b61fa7491ecbb0ed122de8a6a5` 的 Vercel Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 已 `Ready`。新 build log 顯示已偵測 Next.js 16.3.7、完成 build 並部署 routes。UI Preview 網址導向 Vercel login，故 smoke test 尚待登入後執行。
+依賴：fixture 搜尋路徑在本機基底 commit `5589551`。篩選實作與 `vercel.json` framework 修正已推送至核准的 `origin/feature/filter-dedup` Preview 分支；Vercel Preview build Ready，Next.js 16.3.7 routes 已部署。Owner 登入後已完成 UI smoke test；未做 Production 部署。
 
 ## Evidence
 
-- Verification: 篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。修正 commit `96138e4` 的 [Vercel Preview](https://vercel.com/psycho909s-projects/house-search/EpRYXdmLfn2Ehxe6TNVMKrpQnTry) build log 顯示 Next.js 16.3.7 build、TypeScript 檢查與 routes 部署成功，CLI 狀態為 `Ready`。Preview 網址 [house-search-oxqw05zr7-psycho909s-projects.vercel.app](https://house-search-oxqw05zr7-psycho909s-projects.vercel.app) 導向 Vercel login；UI smoke test 尚未執行。
+- Verification: 篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。修正 commit `96138e4` 的 [Vercel Preview](https://vercel.com/psycho909s-projects/house-search/EpRYXdmLfn2Ehxe6TNVMKrpQnTry) build log 顯示 Next.js 16.3.7 build、TypeScript 檢查與 routes 部署成功，CLI 狀態為 `Ready`。Preview UI smoke：NFKC／空白正規化的 `ＭＡＰＬＥ　ＣＯＵＲＴ` 關鍵字返回 Maple Court 單一合成物件；選取 2／3 房返回 3 筆，來源 A、B 的可能重複標記與各自連結都保留。
 - Review / Audit: 獨立 L2 reviewer 的 Standards／Spec review 無可行動 finding，未觸發 Independent Audit。初審的單價範圍、未知計數語意與數值上限差異已修正並重驗。
-- Commit / PR: `09b0de1d3f813d7044d04fd3771ee99b869880c0`、handoff 更新 `093edca1a2e28c0edfb4692721cf8808015df755` 與 Vercel framework 修正 `96138e431a09e0b61fa7491ecbb0ed122de8a6a5` 已推送並核對 `origin/feature/filter-dedup` SHA；未建立 PR，未做 Production 部署。
+- Commit / PR: 篩選實作 `09b0de1d3f813d7044d04fd3771ee99b869880c0`、Vercel framework 修正 `96138e431a09e0b61fa7491ecbb0ed122de8a6a5` 與 handoff 更新已推送並核對 `origin/feature/filter-dedup`；未建立 PR，未做 Production 部署。

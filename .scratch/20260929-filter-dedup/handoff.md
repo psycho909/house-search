@@ -3,17 +3,17 @@
 ## Identity
 - Task: 篩選與保守去重
 - Authority / Ticket: [20260929-filter-dedup](../../tickets/20260929-filter-dedup.md)
-- Status: blocked
+- Status: done
 - Updated: 2026-09-29
 - Source environment: Codex desktop, Windows, `D:\Codex\house-search`
 - Branch: `feature/filter-dedup`
 - Remote: `origin`
 - Base commit: `5589551606e25b49b261c5d1a8cc33a7507e8e4e`
-- Working tree: 篩選實作與 Next.js framework 修正已推送；最新 Preview 已 Ready；UI smoke test 待 Vercel 登入後執行。
-- Sync target: `origin/feature/filter-dedup`（目前遠端 SHA `96138e431a09e0b61fa7491ecbb0ed122de8a6a5`）
+- Working tree: 篩選實作與 Next.js framework 修正已推送；最新 Preview 已 Ready；UI smoke test 通過。本 handoff 隨完成更新同步，push 後核對本機與遠端 SHA。
+- Sync target: `origin/feature/filter-dedup`（framework 修正 commit `96138e431a09e0b61fa7491ecbb0ed122de8a6a5` 已驗證推送；完成狀態含於本次 handoff 更新）
 
 ## Goal and Acceptance
-實作 fixture 搜尋篩選與保守去重。程式、API 測試、production build 與 L2 review 已完成。Vercel framework 修正已部署，最新 Preview 狀態 `Ready`；受保護的 Preview 網址要求登入，UI smoke test 尚未完成，Acceptance 尚未勾選。
+實作 fixture 搜尋篩選與保守去重。程式、API 測試、production build、L2 review、Vercel Preview build 與 UI smoke test 均完成；Acceptance 已接受。
 
 ## Completed
 - 加入總價、單價、建坪、屋齡、格局、車位與關鍵字篩選；缺值不匹配，單價不由總價或坪數推算。
@@ -22,7 +22,7 @@
 - 獨立 L2 Standards／Spec review 無可行動 finding。
 
 ## Remaining
-- 先登入 [Preview 網址](https://house-search-oxqw05zr7-psycho909s-projects.vercel.app)，再確認 UI 篩選輸入、待搜尋條件及結果畫面。
+- Complete. 後續從 TODO 選擇下一張已核准 Ticket。
 
 ## Decisions
 - 本機施工、驗證與 commit 已由 Owner 核准。
@@ -39,13 +39,13 @@
 - `npm run typecheck`: passed。
 - `npm run build`: passed。
 - `git diff --cached --check`: passed after staging the final handoff and documents.
-- UI browser smoke test: unverified; CUA rejected `http://127.0.0.1:3000` by browser security policy.
-- Remote sync: Vercel framework 修正 commit `96138e431a09e0b61fa7491ecbb0ed122de8a6a5` 已推送並核對遠端 SHA；本次 UI access 結果待文件 commit/push。
-- Preview: `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` status `Ready`; browser URL redirects to Vercel login.
+- UI browser smoke test: passed on the Preview URL; normalized community keyword returned fixture C, and 2／3-room OR returned 3 listings with both possible-duplicate listings and source links retained.
+- Remote sync: implementation and Preview configuration were pushed; final handoff update is included in this completion push, with HEAD checked against `origin/feature/filter-dedup`.
+- Preview: `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` status `Ready`; Owner completed Vercel login in the browser and the deployed search results rendered.
 - Review: independent L2 Standards／Spec review passed; no actionable findings; no Independent Audit trigger.
 
 ## Blockers
-- Vercel Preview build 已成功；UI smoke test 尚未完成，因瀏覽器需要 Vercel login。
+- 無。未核准 Production 部署或即時來源 Adapter。
 
 ## Next Action
-Owner signs in to the Preview URL in the open browser tab; then run the UI smoke test for filters and result rendering.
+Complete; use TODO.md to select the next approved ticket.

@@ -1,6 +1,6 @@
 # Project Status
 
-本檔是下一個 Session 的**專案入口**；正式 Work Authority 與最新票狀態以 [`tickets/`](tickets/README.md) 為準。目前已有 fixture 搜尋示範；篩選與保守去重已推至核准的 Preview 分支，Vercel 設定修正待驗證。
+本檔是下一個 Session 的**專案入口**；正式 Work Authority 與最新票狀態以 [`tickets/`](tickets/README.md) 為準。目前已有 fixture 搜尋示範；篩選與保守去重已在核准分支完成、Preview Ready，UI smoke test 通過。
 
 ## Repository
 
@@ -50,11 +50,11 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Next Ticket
 
-目前工作 [篩選與保守去重](tickets/20260929-filter-dedup.md) 已推送至 `origin/feature/filter-dedup`；遠端 SHA 已核對。Vercel CLI 61.0.0 確認 `vercel.json` 的 `framework: nextjs` 修正後 Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`。Preview 網址導向 Vercel login，UI smoke test 待登入後執行。未做 Production 部署；取得來源授權前不啟用任何 live Adapter。
+工作 [篩選與保守去重](tickets/20260929-filter-dedup.md) 已接受並推送至 `origin/feature/filter-dedup`。Vercel CLI 61.0.0 確認 `vercel.json` 的 `framework: nextjs` 修正後 Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`；Owner 登入後完成 Preview UI smoke test。未做 Production 部署；取得來源授權前不啟用任何 live Adapter。
 
 ## Recommended Next Command
 
-在此倉庫執行 `git status --short --branch`，讀取 [.scratch handoff](.scratch/20260929-filter-dedup/handoff.md) 與目標 Ticket；先登入 [Vercel Preview](https://house-search-oxqw05zr7-psycho909s-projects.vercel.app)，再確認篩選 UI 與結果畫面，不要推 Production。
+在此倉庫執行 `git status --short --branch`，從 [TODO.md](TODO.md) 選擇下一張已核准 Ticket；本次未核准其他施工或 Production 部署。
 
 ## Do Not Do
 
@@ -62,4 +62,4 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Verification
 
-本機驗證：篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。Vercel Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`，build log 確認 Next.js routes 已部署；瀏覽器存取導向 Vercel login，UI smoke test 尚未執行。未做 Production 部署或 live Adapter 測試。詳見 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。
+本機驗證：篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。Vercel Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`，build log 確認 Next.js routes 已部署。UI smoke test 驗證社區關鍵字與 2／3 房 OR 篩選、3 筆結果及跨來源疑似重複保留兩個連結。未做 Production 部署或 live Adapter 測試。詳見 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。
