@@ -50,11 +50,11 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Next Ticket
 
-目前工作 [篩選與保守去重](tickets/20260929-filter-dedup.md) 的本機實作、API 測試、typecheck、production build 與 L2 review 已完成；UI 瀏覽器 smoke test 尚未驗證。分支 `feature/filter-dedup` 包含尚未推送的 fixture 基底 commit；Vercel Git integration 會對 branch push 建立 Preview。先由 Owner 決定是否允許該 Preview，再同步分支。後續來源授權票可獨立處理，但取得授權前不啟用任何 live Adapter。
+目前工作 [篩選與保守去重](tickets/20260929-filter-dedup.md) 已推送至 `origin/feature/filter-dedup`；Git SHA 已核對。Vercel Preview deployment 回報 failed，build logs 需由 Owner 登入 Vercel 查看並提供錯誤摘要；部署成功後再執行 UI smoke test。未做 Production 部署；取得來源授權前不啟用任何 live Adapter。
 
 ## Recommended Next Command
 
-在此倉庫執行 `git status --short --branch`，讀取 [.scratch handoff](.scratch/20260929-filter-dedup/handoff.md) 與目標 Ticket；不要 push，直到 Owner 明確決定部署範圍。
+在此倉庫執行 `git status --short --branch`，讀取 [.scratch handoff](.scratch/20260929-filter-dedup/handoff.md) 與目標 Ticket；先處理 Vercel deployment `AMcRPfHZU8cFmpEFbj9JYJ4tAdUn` 的 build error，不要推 Production。
 
 ## Do Not Do
 
@@ -62,4 +62,4 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Verification
 
-本機驗證：`npm test` 18/18、`npm run typecheck`、`npm run build`、`git diff --check` 通過。API route 驗證篩選和去重；本票 UI 瀏覽器操作未確認，CUA 安全政策阻擋 localhost 存取。未做遠端 push、Vercel deployment 或 live Adapter 測試。詳見 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。
+本機驗證：`npm test` 18/18、`npm run typecheck`、`npm run build`、`git diff --cached --check` 通過。分支已推送，遠端 SHA 已核對；Vercel Preview deployment failed，尚未取得 build logs 或執行 UI smoke test。未做 Production 部署或 live Adapter 測試。詳見 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。

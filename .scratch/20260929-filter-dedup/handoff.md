@@ -9,11 +9,11 @@
 - Branch: `feature/filter-dedup`
 - Remote: `origin`
 - Base commit: `5589551606e25b49b261c5d1a8cc33a7507e8e4e`
-- Working tree: 本機 commit 已保存實作與此接續快照；尚未推送。
-- Sync target: `origin/feature/filter-dedup`（未推送）
+- Working tree: 實作 commit 已推送；目前更新中的部署失敗紀錄待本機 commit／push。
+- Sync target: `origin/feature/filter-dedup`（目前遠端 SHA `09b0de1d3f813d7044d04fd3771ee99b869880c0`）
 
 ## Goal and Acceptance
-實作 fixture 搜尋篩選與保守去重。程式、API 測試、production build 與 L2 review 已完成；瀏覽器 UI smoke test 未完成，Acceptance 尚未勾選。
+實作 fixture 搜尋篩選與保守去重。程式、API 測試、production build 與 L2 review 已完成；branch Preview 部署失敗，UI smoke test 未完成，Acceptance 尚未勾選。
 
 ## Completed
 - 加入總價、單價、建坪、屋齡、格局、車位與關鍵字篩選；缺值不匹配，單價不由總價或坪數推算。
@@ -27,7 +27,8 @@
 
 ## Decisions
 - 本機施工、驗證與 commit 已由 Owner 核准。
-- `feature/filter-dedup` 包含 fixture 票的本機基底 commit；該票將部署列為 Out of Scope，因此未獲決定前不 push。
+- Owner 已明確核准推送 `feature/filter-dedup` 並建立 Vercel Preview；未核准 Production 部署。
+- `origin/feature/filter-dedup` 已核對指向 `09b0de1d3f813d7044d04fd3771ee99b869880c0`。
 - CUA 安全政策拒絕本機 URL；未使用替代瀏覽器或間接執行方式繞過。
 
 ## Changed Files
@@ -39,11 +40,13 @@
 - `npm run build`: passed。
 - `git diff --cached --check`: passed after staging the final handoff and documents.
 - UI browser smoke test: unverified; CUA rejected `http://127.0.0.1:3000` by browser security policy.
+- Remote sync: `git push -u origin feature/filter-dedup` 成功；`git ls-remote` SHA 與本機 HEAD 相同。
+- Preview: Vercel deployment `AMcRPfHZU8cFmpEFbj9JYJ4tAdUn` failed；Vercel dashboard 需登入才能讀取 logs，CLI 未安裝／專案未連結。
 - Review: independent L2 Standards／Spec review passed; no actionable findings; no Independent Audit trigger.
 
 ## Blockers
-- Branch push would create a Vercel Preview; Owner has not authorized that deployment scope.
-- UI runtime interaction still needs manual confirmation.
+- Vercel Preview build failed；deployment logs 尚未取得。
+- Preview domain 要求 Vercel sign-in；UI runtime interaction 尚未確認。
 
 ## Next Action
-Owner decides whether pushing `feature/filter-dedup` and creating its Vercel Preview are authorized.
+Owner opens the linked Vercel deployment logs and supplies the build error summary, with secrets removed.

@@ -6,7 +6,7 @@
 - Risk: L2
 - Updated: 2026-09-29
 - Branch: feature/filter-dedup
-- Git / Remote authority: Owner 於 2026-09-29 核准本票 Scope；本機實作、驗證與 commit 已授權。此前 fixture 票的 Preview deployment 範圍決策仍未完成；此分支推送會一併發布其基底 commit，故暫不推送。
+- Git / Remote authority: Owner 於 2026-09-29 核准本票 Scope、本機 commit、`feature/filter-dedup` push 及其 Vercel Preview；未授權 Production 部署。
 
 ## Goal
 
@@ -40,10 +40,10 @@ CHANGELOG.md、HANDOFF.md、SPEC.md、TODO.md、src/domain/、src/server/、src/
 
 ## Dependencies and Blockers
 
-依賴：fixture 搜尋路徑在本機基底 commit `5589551`。Owner 尚未決定是否允許此分支 push 觸發 Vercel Preview；目前 UI 瀏覽器 smoke test 也因 CUA 對 localhost 的安全政策未能執行。
+依賴：fixture 搜尋路徑在本機基底 commit `5589551`。Commit `09b0de1d3f813d7044d04fd3771ee99b869880c0` 已推送到 `origin/feature/filter-dedup`，並觸發 Vercel Preview；部署狀態為 failed。Vercel build logs 需要登入專案帳戶才能檢視，取得錯誤前無法修復；UI smoke test 待 Preview 成功後執行。
 
 ## Evidence
 
-- Verification: `npm test` 18/18、`npm run typecheck`、`npm run build`、`git diff --check` 通過。API route 測試覆蓋總價、單價、建坪、屋齡、格局、車位、關鍵字、缺值及去重；瀏覽器 UI 手動操作尚未驗證，因 CUA 阻擋本機 URL，未嘗試繞過。
+- Verification: `npm test` 18/18、`npm run typecheck`、`npm run build`、`git diff --cached --check` 通過。API route 測試覆蓋總價、單價、建坪、屋齡、格局、車位、關鍵字、缺值及去重。遠端分支 SHA 與本機一致；Vercel Preview [deployment](https://vercel.com/psycho909s-projects/house-search/AMcRPfHZU8cFmpEFbj9JYJ4tAdUn) 回報 failed，build logs 尚未取得，因此瀏覽器 UI smoke test 未驗證。
 - Review / Audit: 獨立 L2 reviewer 的 Standards／Spec review 無可行動 finding，未觸發 Independent Audit。初審的單價範圍、未知計數語意與數值上限差異已修正並重驗。
-- Commit / PR: 本機 commit 已授權；remote push／PR 未授權，等待 Owner 決定 Preview 範圍。
+- Commit / PR: `09b0de1d3f813d7044d04fd3771ee99b869880c0` 已推送並核對 `origin/feature/filter-dedup` SHA；未建立 PR，未做 Production 部署。
