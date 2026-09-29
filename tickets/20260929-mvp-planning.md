@@ -1,6 +1,6 @@
 # 建立跨房屋搜尋 MVP 專案規格
 
-- Status: in_progress
+- Status: accepted
 - Owner: 本專案請求者
 - Approver: 本專案請求者（本 Session 貼上的任務與指定的 GitHub URL）
 - Risk: L2
@@ -26,9 +26,9 @@ README.md、PROJECT.md、SPEC.md、TODO.md、HANDOFF.md、docs/ARCHITECTURE.md�
 
 ## Acceptance
 
-- [ ] 指定遠端 main 包含全部規格文件和可接續票。
+- [x] 指定遠端 main 包含全部規格文件和可接續票。
 - [x] 來源調查分清已驗證與 Need Verification，違反條款的來源不宣稱可抓取。
-- [ ] 文件連結、Ticket 欄位、Git diff 與遠端 commit 經核對。
+- [x] 文件連結、Ticket 欄位、Git diff 與遠端 commit 經核對。
 
 ## Test
 
@@ -45,5 +45,5 @@ README.md、PROJECT.md、SPEC.md、TODO.md、HANDOFF.md、docs/ARCHITECTURE.md�
 ## Evidence
 
 - Verification: 28 份 Markdown 相對連結檢查通過；9 張票必要欄位檢查通過；`git diff --cached --check` 通過。無 runtime／真站 Adapter 驗證。
-- Review / Audit: 主 Agent 自查 Standards（Scope、授權、來源限制）與 Spec（必填／缺值／故障隔離／去重／UI 狀態）；未委派獨立 reviewer，L2 採 `docs/agents/review.md` 的主 Agent fallback。遠端提交待核對。
-- Commit / PR: 待完成
+- Review / Audit: 主 Agent 自查 Standards（Scope、授權、來源限制）與 Spec（必填／缺值／故障隔離／去重／UI 狀態）；未委派獨立 reviewer，L2 採 `docs/agents/review.md` 的主 Agent fallback。剩餘風險：來源授權、API 與 runtime 尚未驗證，均由後續草案票處理。
+- Commit / PR: 首次規格提交 `17b5d0533430a417d9012cfe5ec74d1d72e20c85` 已推送；`git fetch origin` 後 `HEAD == origin/main`。本票結案狀態另以後續提交保存；無 PR。
