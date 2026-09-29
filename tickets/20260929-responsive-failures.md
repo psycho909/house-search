@@ -1,6 +1,6 @@
 # 完成響應式與錯誤狀態
 
-- Status: in_progress
+- Status: accepted
 - Owner: 本專案請求者
 - Approver: 本專案請求者（2026-09-29 本 Session 明確核准）
 - Risk: L2
@@ -26,7 +26,7 @@ src/app/、tests/、docs/UI-UX-DESIGN.md
 
 ## Acceptance
 
-- [ ] 320px、桌面和鍵盤可操作；失敗來源有明確提示；無來源不誤顯示無房源。
+- [x] 320px、桌面和鍵盤可操作；失敗來源有明確提示；無來源不誤顯示無房源。
 
 ## Test
 
@@ -44,6 +44,6 @@ Dependencies satisfied: 20260929-fixture-search-slice and 20260929-filter-dedup 
 
 ## Evidence
 
-- Verification: `npm test` 25/25、`npm run typecheck`、`npm run build`、`git diff --check` 通過；Preview 瀏覽器手測待部署後完成。
+- Verification: `npm test` 25/25、`npm run typecheck`、`npm run build`、`git diff --check` 通過。Preview `house-search-nc8xy2q4m-psycho909s-projects.vercel.app` 對應程式提交 `645ce40` 且為 Ready；桌面 1060px 與手機 320px 手測無水平溢出，320px 抽屜鍵盤焦點、Esc 與完成設定皆通過；總價下限 2000 萬顯示成功來源 0 筆及獨立未啟用來源狀態。
 - Review / Audit: 獨立 L2 review 完成；兩項錯誤呈現與 modal inert 問題已修正，複查無新 blocker。
-- Commit / PR: 待提交至核准分支。
+- Commit / PR: `645ce40` 已推送至 `feature/filter-dedup`，遠端 SHA 相同；未建立 PR。

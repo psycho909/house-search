@@ -4,7 +4,7 @@
 
 ## Now
 
-- [ ] 響應式與錯誤狀態（in progress）— Ticket: [20260929-responsive-failures](tickets/20260929-responsive-failures.md)
+（無）
 
 ## Next
 
