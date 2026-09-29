@@ -10,7 +10,7 @@
 
 ## Completed
 
-專案目標、MVP 契約、架構與 UI 草案；三來源官方頁面及條款的初步桌面調查；本機 Next.js fixture 搜尋 UI／API。是否推送成功須用遠端核對，不能只依本檔宣稱。
+專案目標、MVP 契約、架構與 UI 草案；三來源官方頁面及條款的初步桌面調查；fixture 搜尋垂直路徑與篩選／保守去重已接受並在 Preview 驗證。是否推送成功須用遠端核對，不能只依本檔宣稱。
 
 ## Current Architecture
 
@@ -50,11 +50,11 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Next Ticket
 
-工作 [篩選與保守去重](tickets/20260929-filter-dedup.md) 已接受並推送至 `origin/feature/filter-dedup`。Vercel CLI 61.0.0 確認 `vercel.json` 的 `framework: nextjs` 修正後 Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`；Owner 登入後完成 Preview UI smoke test。未做 Production 部署；取得來源授權前不啟用任何 live Adapter。
+工作 [Fixture 搜尋垂直路徑](tickets/20260929-fixture-search-slice.md) 與 [篩選與保守去重](tickets/20260929-filter-dedup.md) 均已接受。後續核准的 `feature/filter-dedup` Preview 包含 fixture commit `5589551`，Vercel `Ready` 且 UI smoke test 通過。TODO 第一張 [響應式與錯誤狀態](tickets/20260929-responsive-failures.md) 仍是 draft，需 Owner 核准後才能開工。未做 Production 部署；取得來源授權前不啟用任何 live Adapter。
 
 ## Recommended Next Command
 
-在此倉庫執行 `git status --short --branch`，從 [TODO.md](TODO.md) 選擇下一張已核准 Ticket；本次未核准其他施工或 Production 部署。
+在此倉庫執行 `git status --short --branch`，確認是否核准 [響應式與錯誤狀態](tickets/20260929-responsive-failures.md) 的 draft Scope；未核准其他施工或 Production 部署。
 
 ## Do Not Do
 
@@ -62,4 +62,4 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Verification
 
-本機驗證：篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。Vercel Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`，build log 確認 Next.js routes 已部署。UI smoke test 驗證社區關鍵字與 2／3 房 OR 篩選、3 筆結果及跨來源疑似重複保留兩個連結。未做 Production 部署或 live Adapter 測試。詳見 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。
+本機驗證：篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過；fixture 搜尋基礎測試 3/3 通過。Vercel Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`，UI smoke test 確認城市／行政區搜尋、社區關鍵字、2／3 房 OR 篩選與跨來源疑似重複保留兩個連結。未做 Production 部署或 live Adapter 測試。詳見 [fixture 搜尋票](tickets/20260929-fixture-search-slice.md) 與 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。

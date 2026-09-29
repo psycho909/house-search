@@ -13,7 +13,6 @@
 
 ## Blocked
 
-- [ ] Fixture 搜尋垂直路徑 — Ticket: [20260929-fixture-search-slice](tickets/20260929-fixture-search-slice.md)（本機完成；遠端 push 會觸發部署）
 - [ ] 確認來源使用授權 — Ticket: [20260929-source-permission](tickets/20260929-source-permission.md)
 - [ ] 591 Adapter — Ticket: [20260929-591-adapter](tickets/20260929-591-adapter.md)
 - [ ] 信義 Adapter — Ticket: [20260929-sinyi-adapter](tickets/20260929-sinyi-adapter.md)

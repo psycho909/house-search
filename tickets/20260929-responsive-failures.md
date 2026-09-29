@@ -38,7 +38,7 @@ fixture 狀態測試及真實瀏覽器手測。
 
 ## Dependencies and Blockers
 
-Blocked by: 20260929-fixture-search-slice；20260929-filter-dedup。
+Dependencies satisfied: 20260929-fixture-search-slice and 20260929-filter-dedup are accepted.
 
 ## Evidence
 
