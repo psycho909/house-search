@@ -6,7 +6,7 @@
 
 - GitHub：[psycho909/house-search](https://github.com/psycho909/house-search)
 - Branch：`feature/filter-dedup`（本次核准工作分支；`main` 未修改）
-- Latest Commit：以 `git rev-parse HEAD` 和 `git ls-remote origin refs/heads/main` 核對；本檔不記自身提交的 hash
+- Latest Commit：以 `git rev-parse HEAD` 和 `git ls-remote origin refs/heads/feature/filter-dedup` 核對本次工作分支；本檔不記自身提交的 hash
 
 ## Completed
 
@@ -50,11 +50,11 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Next Ticket
 
-目前工作 [篩選與保守去重](tickets/20260929-filter-dedup.md) 已推送至 `origin/feature/filter-dedup`；Git SHA 已核對。已用 Vercel CLI 61.0.0 讀取 Preview build logs，確認 Next.js build 成功後因 Vercel 設定尋找不存在的 `public` 輸出目錄而失敗。`vercel.json` 已新增 `framework: nextjs` 修正，待推送並驗證新 Preview；通過後再執行 UI smoke test。未做 Production 部署；取得來源授權前不啟用任何 live Adapter。
+目前工作 [篩選與保守去重](tickets/20260929-filter-dedup.md) 已推送至 `origin/feature/filter-dedup`；遠端 SHA 已核對。Vercel CLI 61.0.0 確認 `vercel.json` 的 `framework: nextjs` 修正後 Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`。Preview 網址導向 Vercel login，UI smoke test 待登入後執行。未做 Production 部署；取得來源授權前不啟用任何 live Adapter。
 
 ## Recommended Next Command
 
-在此倉庫執行 `git status --short --branch`，讀取 [.scratch handoff](.scratch/20260929-filter-dedup/handoff.md) 與目標 Ticket；commit/push `vercel.json` 修正到已核准的 `feature/filter-dedup`，確認新 Vercel Preview 狀態，不要推 Production。
+在此倉庫執行 `git status --short --branch`，讀取 [.scratch handoff](.scratch/20260929-filter-dedup/handoff.md) 與目標 Ticket；先登入 [Vercel Preview](https://house-search-oxqw05zr7-psycho909s-projects.vercel.app)，再確認篩選 UI 與結果畫面，不要推 Production。
 
 ## Do Not Do
 
@@ -62,4 +62,4 @@ Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 f
 
 ## Verification
 
-本機驗證：篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。Vercel Preview `dpl_46rAEj2K94kbAWk2MqoLKqNz2Uez` 的 log 已確認 Next.js build 成功但輸出目錄錯誤；`vercel.json` framework 修正待 Preview 驗證。UI smoke test 尚未執行。未做 Production 部署或 live Adapter 測試。詳見 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。
+本機驗證：篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。Vercel Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 為 `Ready`，build log 確認 Next.js routes 已部署；瀏覽器存取導向 Vercel login，UI smoke test 尚未執行。未做 Production 部署或 live Adapter 測試。詳見 [篩選與保守去重票](tickets/20260929-filter-dedup.md)。

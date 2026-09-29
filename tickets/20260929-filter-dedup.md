@@ -40,10 +40,10 @@ CHANGELOG.md、HANDOFF.md、SPEC.md、TODO.md、vercel.json、src/domain/、src/
 
 ## Dependencies and Blockers
 
-依賴：fixture 搜尋路徑在本機基底 commit `5589551`。篩選實作 commit `09b0de1d3f813d7044d04fd3771ee99b869880c0` 與 handoff 更新 commit `093edca1a2e28c0edfb4692721cf8808015df755` 已推送到 `origin/feature/filter-dedup`。最新 Vercel Preview `dpl_46rAEj2K94kbAWk2MqoLKqNz2Uez` 的 Next.js build 與 TypeScript 檢查成功，但部署設定仍尋找不存在的 `public` 輸出目錄。已取得 build logs，新增 `vercel.json` 明確指定 Next.js framework；此修正尚待 Preview 驗證。UI smoke test 待 Preview 成功且可存取後執行。
+依賴：fixture 搜尋路徑在本機基底 commit `5589551`。篩選實作、handoff 與 Vercel framework 修正已推送到 `origin/feature/filter-dedup`；修正 commit `96138e431a09e0b61fa7491ecbb0ed122de8a6a5` 的 Vercel Preview `dpl_EpRYXdmLfn2Ehxe6TNVMKrpQnTry` 已 `Ready`。新 build log 顯示已偵測 Next.js 16.3.7、完成 build 並部署 routes。UI Preview 網址導向 Vercel login，故 smoke test 尚待登入後執行。
 
 ## Evidence
 
-- Verification: 篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。最新 Vercel Preview [deployment](https://vercel.com/psycho909s-projects/house-search/46rAEj2K94kbAWk2MqoLKqNz2Uez) 的 build log 顯示 Next.js build 與 TypeScript 成功，最後因 Vercel 尋找 `public` 輸出目錄而失敗；已新增 `vercel.json` 指定 Next.js framework，等待新 Preview 驗證。UI smoke test 尚未執行。
+- Verification: 篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。修正 commit `96138e4` 的 [Vercel Preview](https://vercel.com/psycho909s-projects/house-search/EpRYXdmLfn2Ehxe6TNVMKrpQnTry) build log 顯示 Next.js 16.3.7 build、TypeScript 檢查與 routes 部署成功，CLI 狀態為 `Ready`。Preview 網址 [house-search-oxqw05zr7-psycho909s-projects.vercel.app](https://house-search-oxqw05zr7-psycho909s-projects.vercel.app) 導向 Vercel login；UI smoke test 尚未執行。
 - Review / Audit: 獨立 L2 reviewer 的 Standards／Spec review 無可行動 finding，未觸發 Independent Audit。初審的單價範圍、未知計數語意與數值上限差異已修正並重驗。
-- Commit / PR: `09b0de1d3f813d7044d04fd3771ee99b869880c0` 與 handoff 更新 `093edca1a2e28c0edfb4692721cf8808015df755` 已推送並核對 `origin/feature/filter-dedup` SHA；目前 Next.js framework 修正待 commit/push；未建立 PR，未做 Production 部署。
+- Commit / PR: `09b0de1d3f813d7044d04fd3771ee99b869880c0`、handoff 更新 `093edca1a2e28c0edfb4692721cf8808015df755` 與 Vercel framework 修正 `96138e431a09e0b61fa7491ecbb0ed122de8a6a5` 已推送並核對 `origin/feature/filter-dedup` SHA；未建立 PR，未做 Production 部署。
