@@ -1,15 +1,47 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import {
   SEARCHABLE_AREAS,
   type DemoListing,
-  type DemoSearchResponse,
   type SearchFilters,
 } from "../domain/search.ts";
+import type { SearchResponse, SearchSourceStatus } from "./search-status.ts";
 
 function listingLocation(listing: DemoListing) {
   return [listing.city, listing.district, listing.community, listing.address].filter(Boolean).join("・");
+}
+
+function resultStateMessage(state: SearchResponse["resultState"]) {
+  switch (state) {
+    case "results":
+      return "已取得符合條件的固定合成示範資料。";
+    case "partial":
+      return "已取得部分來源的結果；以下只列出本次成功取得的資料。";
+    case "timeout":
+      return "搜尋逾時，未能取得完整來源結果。";
+    case "all_failed":
+      return "這次未能取得房源資料，無法判定是否有符合條件的物件。";
+    case "no_sources":
+      return "目前沒有已啟用的房源資料來源，這次沒有查詢房源。";
+    case "no_results":
+      return "這次取得的房源中沒有符合條件的物件。";
+  }
+}
+
+function sourceStatusMessage(source: SearchSourceStatus) {
+  switch (source.status) {
+    case "success":
+      return source.matchedCount === undefined
+        ? "成功取得結果"
+        : `成功取得 ${source.matchedCount} 筆候選`;
+    case "failed":
+      return "暫時無法取得";
+    case "timeout":
+      return "搜尋逾時";
+    case "disabled":
+      return "未啟用";
+  }
 }
 
 export default function Home() {
@@ -29,12 +61,49 @@ export default function Home() {
     parking: "any" as NonNullable<SearchFilters["parking"]>,
   });
   const [result, setResult] = useState<{
-    response: DemoSearchResponse;
+    response: SearchResponse;
     query: { city: string; district: string; filters: SearchFilters };
   } | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterPanelRef = useRef<HTMLDivElement>(null);
+  const filterTriggerRef = useRef<HTMLButtonElement>(null);
+  const filterCloseRef = useRef<HTMLButtonElement>(null);
   const districts = SEARCHABLE_AREAS.find((area) => area.city === city)?.districts ?? [];
+
+  useEffect(() => {
+    if (filtersOpen) filterCloseRef.current?.focus();
+  }, [filtersOpen]);
+
+  function closeFilters() {
+    setFiltersOpen(false);
+    window.requestAnimationFrame(() => filterTriggerRef.current?.focus());
+  }
+
+  function handleFilterKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (!filtersOpen || !window.matchMedia("(max-width: 599px)").matches) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeFilters();
+      return;
+    }
+    if (event.key !== "Tab") return;
+
+    const focusable = filterPanelRef.current?.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+    );
+    if (!focusable?.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
 
   function parseRange(minimum: string, maximum: string): SearchFilters["totalPrice"] {
     const range: NonNullable<SearchFilters["totalPrice"]> = {};
@@ -107,14 +176,36 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(query),
+        signal: AbortSignal.timeout(5_000),
       });
-      const payload = (await response.json()) as DemoSearchResponse | { error?: string };
-      if (!response.ok || !("listings" in payload)) {
-        throw new Error("error" in payload ? payload.error : "搜尋暫時無法完成。");
+      if (!response.ok) {
+        setError("搜尋服務暫時無法完成，請稍後重試。");
+        return;
       }
-      setResult({ response: payload, query });
+
+      let payload: Partial<SearchResponse>;
+      try {
+        payload = (await response.json()) as Partial<SearchResponse>;
+      } catch {
+        setError("搜尋服務暫時無法完成，請稍後重試。");
+        return;
+      }
+      if (
+        !payload ||
+        !Array.isArray(payload.listings) ||
+        !Array.isArray(payload.sourceStatuses) ||
+        !["results", "partial", "timeout", "all_failed", "no_sources", "no_results"].includes(payload.resultState as string)
+      ) {
+        setError("搜尋服務暫時無法完成，請稍後重試。");
+        return;
+      }
+      setResult({ response: payload as SearchResponse, query });
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "搜尋暫時無法完成。");
+      setError(
+        reason instanceof DOMException && reason.name === "TimeoutError"
+          ? "搜尋服務逾時，請稍後重試。"
+          : "無法連線至搜尋服務，請檢查網路後重試。",
+      );
     } finally {
       setLoading(false);
     }
@@ -160,10 +251,13 @@ export default function Home() {
         : null,
     () => setDraft((value) => ({ ...value, parking: "any" })),
   );
+  const canShowListings = result !== null &&
+    ["results", "partial", "timeout"].includes(result.response.resultState) &&
+    result.response.listings.length > 0;
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-[1180px] px-4 py-8 text-[#302826] sm:px-6 sm:py-12">
-      <header className="mb-8 border-b border-[#968075] pb-6 sm:mb-10">
+      <header className="mb-8 border-b border-[#968075] pb-6 sm:mb-10" inert={filtersOpen}>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-[32px]">跨站找房</h1>
         <p className="mt-2 max-w-2xl text-base leading-7 text-[#685750]">
           用同一組條件整理候選房源。以下房源與來源連結都是固定合成示範資料，不是真實刊登。
@@ -171,15 +265,15 @@ export default function Home() {
       </header>
 
       <section aria-labelledby="search-heading" className="rounded-lg border border-[#968075] bg-[#fcfaf8] p-5 sm:p-7">
-        <h2 id="search-heading" className="text-xl font-semibold">搜尋條件</h2>
-        <p className="mt-2 text-sm leading-6 text-[#685750]">
+        <h2 id="search-heading" className="text-xl font-semibold" inert={filtersOpen}>搜尋條件</h2>
+        <p className="mt-2 text-sm leading-6 text-[#685750]" inert={filtersOpen}>
           示範版目前支援新北市／新莊區。591、信義與永慶即時來源尚未啟用。
         </p>
 
         <form className="mt-6" onSubmit={search}>
           <fieldset disabled={loading} className="grid min-w-0 gap-4 sm:grid-cols-2 sm:items-end">
-            <legend className="sr-only">搜尋地區與篩選條件</legend>
-            <div>
+            <legend className="sr-only" inert={filtersOpen}>搜尋地區與篩選條件</legend>
+            <div inert={filtersOpen}>
               <label className="mb-2 block text-sm font-medium" htmlFor="city">縣市</label>
               <select
                 id="city"
@@ -196,7 +290,7 @@ export default function Home() {
               </select>
             </div>
 
-            <div>
+            <div inert={filtersOpen}>
               <label className="mb-2 block text-sm font-medium" htmlFor="district">行政區</label>
               <select
                 id="district"
@@ -211,7 +305,7 @@ export default function Home() {
               </select>
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-2" inert={filtersOpen}>
               <label className="mb-2 block text-sm font-medium" htmlFor="keyword">關鍵字</label>
               <input
                 id="keyword"
@@ -224,6 +318,49 @@ export default function Home() {
               />
             </div>
 
+            <div className="search-actions sm:col-span-2" inert={filtersOpen}>
+              <button
+                ref={filterTriggerRef}
+                type="button"
+                className="mobile-filter-trigger min-h-11 rounded-lg border border-[#968075] bg-white px-4 font-medium hover:bg-[#f1ebe7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6e3b49]"
+                aria-expanded={filtersOpen}
+                aria-controls="filter-panel"
+                onClick={() => setFiltersOpen(true)}
+              >
+                更多條件
+              </button>
+              <button
+                className="search-submit min-h-11 rounded-lg bg-[#6e3b49] px-5 font-medium text-white hover:bg-[#542b37] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#302826] disabled:cursor-wait disabled:opacity-70"
+                type="submit"
+              >
+                {loading ? "搜尋中…" : "搜尋示範資料"}
+              </button>
+            </div>
+
+            <div className="filter-backdrop" hidden={!filtersOpen} aria-hidden="true" />
+            <div
+              ref={filterPanelRef}
+              id="filter-panel"
+              className="filter-drawer sm:col-span-2"
+              data-open={filtersOpen}
+              role={filtersOpen ? "dialog" : undefined}
+              aria-modal={filtersOpen ? true : undefined}
+              aria-labelledby="filter-panel-heading"
+              onKeyDown={handleFilterKeyDown}
+            >
+              <div className="filter-drawer-header">
+                <h3 id="filter-panel-heading" className="text-lg font-semibold">篩選條件</h3>
+                <button
+                  ref={filterCloseRef}
+                  type="button"
+                  className="filter-drawer-close min-h-11 rounded-lg border border-[#968075] bg-white px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6e3b49]"
+                  onClick={closeFilters}
+                >
+                  關閉
+                </button>
+              </div>
+
+              <div className="grid min-w-0 gap-4 sm:grid-cols-2">
             <div>
               <p className="mb-2 text-sm font-medium">總價範圍（萬元）</p>
               <div className="grid grid-cols-2 gap-3">
@@ -416,31 +553,36 @@ export default function Home() {
                 </ul>
               )}
             </div>
+              </div>
 
-            <button
-              className="min-h-11 rounded-lg bg-[#6e3b49] px-5 font-medium text-white hover:bg-[#542b37] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#302826] disabled:cursor-wait disabled:opacity-70 sm:col-span-2 sm:justify-self-start"
-              type="submit"
-            >
-              {loading ? "搜尋中…" : "搜尋示範資料"}
-            </button>
+              <div className="filter-drawer-footer">
+                <button
+                  type="button"
+                  className="filter-drawer-done min-h-11 rounded-lg bg-[#6e3b49] px-5 font-medium text-white hover:bg-[#542b37] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#302826]"
+                  onClick={closeFilters}
+                >
+                  完成設定
+                </button>
+              </div>
+            </div>
           </fieldset>
         </form>
       </section>
 
-      <section aria-labelledby="results-heading" aria-live="polite" aria-busy={loading} className="mt-8 sm:mt-10">
+      <section aria-labelledby="results-heading" aria-live="polite" aria-busy={loading} className="mt-8 sm:mt-10" inert={filtersOpen}>
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[#968075] pb-3">
           <h2 id="results-heading" className="text-xl font-semibold">搜尋結果</h2>
-          {result && (
+          {result && !loading && !error && canShowListings && (
             <p className="text-sm text-[#685750]">
               {resultIsStale ? "上次搜尋結果：" : "本次示範資料："}{result.response.listings.length} 筆
             </p>
           )}
         </div>
 
-        {loading && <p className="py-6 text-[#685750]">正在查詢固定合成示範資料…</p>}
+        {loading && <p className="py-6 text-[#685750]" role="status">正在查詢固定合成示範資料…</p>}
         {error && <p className="py-6 font-medium text-[#9a421f]" role="alert">{error}</p>}
         {!loading && !error && !result && <p className="py-6 text-[#685750]">選擇縣市與行政區，開始搜尋。</p>}
-        {result && (
+        {!loading && !error && result && (
           <>
             {resultIsStale && (
               <p className="mt-4 rounded-lg border border-[#968075] bg-[#fcfaf8] p-4 text-sm leading-6" role="status">
@@ -450,15 +592,35 @@ export default function Home() {
             <p className="pt-4 text-sm leading-6 text-[#685750]">
               本次結果使用的條件：{describeQuery(result.query)}
             </p>
+            <p
+              className={`mt-4 rounded-lg border bg-[#fcfaf8] p-4 text-sm font-medium leading-6 ${
+                ["timeout", "all_failed", "no_sources"].includes(result.response.resultState)
+                  ? "border-[#9a421f] text-[#9a421f]"
+                  : "border-[#968075]"
+              }`}
+              role="status"
+            >
+              {resultStateMessage(result.response.resultState)}
+            </p>
+            <div className="py-3">
+              <h3 className="text-sm font-semibold">本次來源狀態</h3>
+              {result.response.sourceStatuses.length > 0 ? (
+                <ul className="mt-2 grid gap-1 text-sm leading-6 text-[#685750]">
+                  {result.response.sourceStatuses.map((source) => (
+                    <li key={source.id}>{source.label}：{sourceStatusMessage(source)}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-2 text-sm leading-6 text-[#685750]">沒有來源狀態資料。</p>
+              )}
+            </div>
             <p className="py-3 text-sm leading-6 text-[#685750]">{result.response.notice}</p>
             {result.response.excludedBecauseUnknown > 0 && (
               <p className="pb-3 text-sm leading-6 text-[#685750]" role="status">
                 部分物件因資料不足未列入符合結果。
               </p>
             )}
-            {result.response.listings.length === 0 ? (
-              <p className="border-t border-[#968075] py-5">目前沒有符合的示範資料。</p>
-            ) : (
+            {canShowListings && (
               <ul className="divide-y divide-[#968075] border-y border-[#968075]">
                 {result.response.listings.map((listing) => (
                   <li className="grid gap-3 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center" key={listing.sourceLabel + "-" + listing.id}>

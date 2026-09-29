@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { POST } from "../src/app/api/search/route.ts";
+import { deriveSearchResultState, type SearchSourceStatus } from "../src/app/search-status.ts";
 
 function post(body: string) {
   return POST(new Request("http://localhost/api/search", {
@@ -20,6 +21,33 @@ test("supported area returns a clearly marked synthetic fixture", async () => {
   assert.equal(result.listings[0].source, "fixture");
   assert.equal(result.listings[0].city, "新北市");
   assert.equal(result.listings[0].district, "新莊區");
+  assert.equal(result.resultState, "results");
+  assert.deepEqual(result.sourceStatuses, [
+    { id: "fixture", label: "合成示範資料", status: "success", matchedCount: result.listings.length },
+    { id: "591", label: "591", status: "disabled" },
+    { id: "sinyi", label: "信義", status: "disabled" },
+    { id: "yungching", label: "永慶", status: "disabled" },
+  ]);
+});
+
+test("successful empty fixture response is classified as no_results", async () => {
+  const response = await post(JSON.stringify({
+    city: "新北市",
+    district: "新莊區",
+    filters: { totalPrice: { min: 2000 } },
+  }));
+  const result = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(result.listings, []);
+  assert.equal(result.resultState, "no_results");
+  assert.equal(result.sourceStatuses[0].status, "success");
+  assert.equal(result.sourceStatuses[0].matchedCount, 0);
+  assert.deepEqual(result.sourceStatuses.slice(1).map((source: { status: string }) => source.status), [
+    "disabled",
+    "disabled",
+    "disabled",
+  ]);
 });
 
 test("unsupported and malformed searches are rejected", async () => {
@@ -28,6 +56,8 @@ test("unsupported and malformed searches are rejected", async () => {
 
   assert.equal(unsupported.status, 400);
   assert.equal(malformed.status, 400);
+  assert.deepEqual(await unsupported.json(), { error: "示範版目前僅支援新北市／新莊區。" });
+  assert.deepEqual(await malformed.json(), { error: "搜尋資料格式無效。" });
 });
 
 test("search request bodies are capped at 512 bytes", async () => {
@@ -254,4 +284,48 @@ test("invalid ranges, room options, and unknown filters are rejected", async () 
     const response = await post(JSON.stringify({ city: "新北市", district: "新莊區", filters }));
     assert.equal(response.status, 400);
   }
+});
+
+test("empty or disabled sources are classified as no_sources", () => {
+  assert.equal(deriveSearchResultState([], 0), "no_sources");
+  assert.equal(deriveSearchResultState([
+    { id: "591", label: "591", status: "disabled" },
+    { id: "sinyi", label: "信義", status: "disabled" },
+  ], 0), "no_sources");
+});
+
+test("all active timeouts are classified as timeout", () => {
+  assert.equal(deriveSearchResultState([
+    { id: "fixture", label: "合成示範資料", status: "timeout" },
+    { id: "591", label: "591", status: "timeout" },
+    { id: "sinyi", label: "信義", status: "disabled" },
+  ], 0), "timeout");
+});
+
+test("errors without a successful source are classified as all_failed", () => {
+  assert.equal(deriveSearchResultState([
+    { id: "fixture", label: "合成示範資料", status: "failed" },
+    { id: "591", label: "591", status: "timeout" },
+  ], 0), "all_failed");
+});
+
+test("a successful source mixed with an error is classified as partial", () => {
+  const statuses: SearchSourceStatus[] = [
+    { id: "fixture", label: "合成示範資料", status: "success", matchedCount: 2 },
+    { id: "591", label: "591", status: "failed" },
+  ];
+
+  assert.equal(deriveSearchResultState(statuses, 2), "partial");
+});
+
+test("successful sources with no listings are classified as no_results", () => {
+  assert.equal(deriveSearchResultState([
+    { id: "fixture", label: "合成示範資料", status: "success", matchedCount: 0 },
+  ], 0), "no_results");
+});
+
+test("successful sources with listings are classified as results", () => {
+  assert.equal(deriveSearchResultState([
+    { id: "fixture", label: "合成示範資料", status: "success", matchedCount: 1 },
+  ], 1), "results");
 });

@@ -1,14 +1,13 @@
 # TODO
 
-本頁只索引未完成正式 Ticket。完整 Scope、依賴、驗收與狀態以票為正本；所有後續票目前均為 `draft`，核准後才可施工。
+本頁只索引未完成正式 Ticket。完整 Scope、依賴、驗收與狀態以票為正本；未核准的後續票維持 `draft`。
 
 ## Now
 
-（無）
+- [ ] 響應式與錯誤狀態（in progress）— Ticket: [20260929-responsive-failures](tickets/20260929-responsive-failures.md)
 
 ## Next
 
-- [ ] 響應式與錯誤狀態 — Ticket: [20260929-responsive-failures](tickets/20260929-responsive-failures.md)
 - [ ] 整合驗證與部署候選 — Ticket: [20260929-integration-release](tickets/20260929-integration-release.md)
 
 ## Blocked
