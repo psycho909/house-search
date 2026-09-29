@@ -1,6 +1,6 @@
 # 規劃比較清單 UI／UX
 
-- Status: in_progress
+- Status: accepted
 - Owner: 本專案請求者
 - Approver: 本專案請求者（本 Session 指定 frontend-design 並選定「比較清單」）
 - Risk: L2
@@ -29,7 +29,7 @@ docs/UI-UX-DESIGN.md；本 Ticket。
 - [x] 比較清單有清楚的桌面與手機資訊層級、線框及設計 token。
 - [x] 搜尋、缺值、部分失敗、無來源、疑似重複等狀態符合 SPEC 與來源授權邊界。
 - [x] 包含可驗證的鍵盤、手機、對比度與文案驗收。
-- [ ] 文件檢查與遠端 main 同步通過。
+- [x] 文件檢查與遠端 main 同步通過。
 
 ## Test
 
@@ -47,4 +47,4 @@ Blocked by: 無；使用者已選定視覺方向。
 
 - Verification: `git diff --check` 與 29 份 Markdown 相對連結檢查通過；以計算式核對四組主要文字／底色對比度，成品 hover、focus、disabled 尚未驗證。無 UI runtime 或使用者測試。
 - Review / Audit: 主 Agent 依 `docs/agents/review.md` 的 L2 fallback 自查 Standards（文件 Scope、來源授權與資料真實性）及 Spec（查詢、缺值、故障隔離、去重、320px）。修正了「已套用條件」與舊結果可能混淆的文案；未進行獨立 review。
-- Commit / PR: 待完成
+- Commit / PR: 規劃提交 `1b76f8ff9e48bf99b1364c5e436519587ef416db` 已推送；`git fetch origin` 後 `HEAD == origin/main`。本票驗收狀態以後續提交保存；無 PR。
