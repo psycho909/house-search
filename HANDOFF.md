@@ -1,6 +1,6 @@
 # Project Status
 
-本檔是下一個 Session 的**專案入口**；正式 Work Authority 與最新票狀態以 [`tickets/`](tickets/README.md) 為準。本次只有規格，沒有可執行 Web App。
+本檔是下一個 Session 的**專案入口**；正式 Work Authority 與最新票狀態以 [`tickets/`](tickets/README.md) 為準。目前已有本機 fixture 搜尋示範；相關票尚未遠端同步。
 
 ## Repository
 
@@ -10,11 +10,11 @@
 
 ## Completed
 
-專案目標、MVP 契約、架構與 UI 草案；三來源官方頁面及條款的初步桌面調查；後續正式草案票。是否推送成功須用遠端核對，不能只依本檔宣稱。
+專案目標、MVP 契約、架構與 UI 草案；三來源官方頁面及條款的初步桌面調查；本機 Next.js fixture 搜尋 UI／API。是否推送成功須用遠端核對，不能只依本檔宣稱。
 
 ## Current Architecture
 
-規劃 Browser → Next.js UI → Server Search API → 經授權的來源 Adapter → 正規化／本地篩選／去重標記 → 結果；MVP 無資料庫。實際程式碼尚未建立。
+Browser → Next.js UI → Server Search API → 查詢驗證 → 固定合成 fixture → 結果。資料庫與 live Adapter 尚未建立或啟用。
 
 ## Documents
 
@@ -50,11 +50,11 @@
 
 ## Next Ticket
 
-先由 Owner 核准 [fixture 搜尋垂直路徑](tickets/20260929-fixture-search-slice.md)；[來源授權票](tickets/20260929-source-permission.md) 可並行啟動，但取得授權前不啟用任何 live Adapter。
+目前工作 [fixture 搜尋垂直路徑](tickets/20260929-fixture-search-slice.md) 已本機驗收，但為遵守其「部署 Out of Scope」，未推送任何分支；Vercel Git integration 會對 branch push 建立 Preview、對 `main` push 建立 Production。先由 Owner 決定是否修改該部署範圍。後續來源授權票可獨立處理，但取得授權前不啟用任何 live Adapter。
 
 ## Recommended Next Command
 
-在此倉庫執行 `git pull --ff-only origin main`，再讀 `AGENTS.md`、本檔、`PROJECT.md`、`SPEC.md` 與目標 Ticket。
+在此倉庫執行 `git status --short --branch`，讀取 [.scratch handoff](.scratch/20260929-fixture-search-slice/handoff.md) 與目標 Ticket；不要 push，直到 Owner 明確決定部署範圍。
 
 ## Do Not Do
 
@@ -62,4 +62,4 @@
 
 ## Verification
 
-本次以文件結構、連結、Git diff 與遠端提交核對為準；無 runtime 測試或真站 Adapter 測試。實際完成證據見 [規劃票](tickets/20260929-mvp-planning.md)。
+本機驗證：`npm test` 3/3、`npm run typecheck`、`npm run build` 通過；瀏覽器搜尋新北市／新莊區顯示 1 筆合成 fixture。此為本機證據，未做遠端 push、Vercel deployment 或 live Adapter 測試。詳見 [fixture 搜尋票](tickets/20260929-fixture-search-slice.md)。
