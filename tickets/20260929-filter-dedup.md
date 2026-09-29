@@ -18,7 +18,7 @@
 
 ## Files
 
-CHANGELOG.md、HANDOFF.md、SPEC.md、TODO.md、src/domain/、src/server/、src/app/、tests/
+CHANGELOG.md、HANDOFF.md、SPEC.md、TODO.md、vercel.json、src/domain/、src/server/、src/app/、tests/
 
 ## Out of Scope
 
@@ -40,10 +40,10 @@ CHANGELOG.md、HANDOFF.md、SPEC.md、TODO.md、src/domain/、src/server/、src/
 
 ## Dependencies and Blockers
 
-依賴：fixture 搜尋路徑在本機基底 commit `5589551`。Commit `09b0de1d3f813d7044d04fd3771ee99b869880c0` 已推送到 `origin/feature/filter-dedup`，並觸發 Vercel Preview；部署狀態為 failed。Vercel build logs 需要登入專案帳戶才能檢視，取得錯誤前無法修復；UI smoke test 待 Preview 成功後執行。
+依賴：fixture 搜尋路徑在本機基底 commit `5589551`。篩選實作 commit `09b0de1d3f813d7044d04fd3771ee99b869880c0` 與 handoff 更新 commit `093edca1a2e28c0edfb4692721cf8808015df755` 已推送到 `origin/feature/filter-dedup`。最新 Vercel Preview `dpl_46rAEj2K94kbAWk2MqoLKqNz2Uez` 的 Next.js build 與 TypeScript 檢查成功，但部署設定仍尋找不存在的 `public` 輸出目錄。已取得 build logs，新增 `vercel.json` 明確指定 Next.js framework；此修正尚待 Preview 驗證。UI smoke test 待 Preview 成功且可存取後執行。
 
 ## Evidence
 
-- Verification: `npm test` 18/18、`npm run typecheck`、`npm run build`、`git diff --cached --check` 通過。API route 測試覆蓋總價、單價、建坪、屋齡、格局、車位、關鍵字、缺值及去重。遠端分支 SHA 與本機一致；Vercel Preview [deployment](https://vercel.com/psycho909s-projects/house-search/AMcRPfHZU8cFmpEFbj9JYJ4tAdUn) 回報 failed，build logs 尚未取得，因此瀏覽器 UI smoke test 未驗證。
+- Verification: 篩選實作的 `npm test` 18/18、`npm run typecheck`、`npm run build` 通過。最新 Vercel Preview [deployment](https://vercel.com/psycho909s-projects/house-search/46rAEj2K94kbAWk2MqoLKqNz2Uez) 的 build log 顯示 Next.js build 與 TypeScript 成功，最後因 Vercel 尋找 `public` 輸出目錄而失敗；已新增 `vercel.json` 指定 Next.js framework，等待新 Preview 驗證。UI smoke test 尚未執行。
 - Review / Audit: 獨立 L2 reviewer 的 Standards／Spec review 無可行動 finding，未觸發 Independent Audit。初審的單價範圍、未知計數語意與數值上限差異已修正並重驗。
-- Commit / PR: `09b0de1d3f813d7044d04fd3771ee99b869880c0` 已推送並核對 `origin/feature/filter-dedup` SHA；未建立 PR，未做 Production 部署。
+- Commit / PR: `09b0de1d3f813d7044d04fd3771ee99b869880c0` 與 handoff 更新 `093edca1a2e28c0edfb4692721cf8808015df755` 已推送並核對 `origin/feature/filter-dedup` SHA；目前 Next.js framework 修正待 commit/push；未建立 PR，未做 Production 部署。

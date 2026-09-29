@@ -13,7 +13,7 @@
 
 ## Blocked
 
-- [ ] 篩選與保守去重 — Ticket: [20260929-filter-dedup](tickets/20260929-filter-dedup.md)（遠端 Preview 部署失敗；等待 Vercel build logs）
+- [ ] 篩選與保守去重 — Ticket: [20260929-filter-dedup](tickets/20260929-filter-dedup.md)（已定位 Vercel framework/output directory 設定錯誤；Next.js 設定修正待 Preview 驗證與 UI smoke test）
 - [ ] Fixture 搜尋垂直路徑 — Ticket: [20260929-fixture-search-slice](tickets/20260929-fixture-search-slice.md)（本機完成；遠端 push 會觸發部署）
 - [ ] 確認來源使用授權 — Ticket: [20260929-source-permission](tickets/20260929-source-permission.md)
 - [ ] 591 Adapter — Ticket: [20260929-591-adapter](tickets/20260929-591-adapter.md)
