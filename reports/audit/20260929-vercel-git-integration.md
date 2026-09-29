@@ -19,7 +19,7 @@ Vercel Git 設定顯示 `psycho909/house-search`，首次從 `main` 部署 `f3d1
 1. README 曾把後續 push 自動部署寫成已驗證事實；已改成「驗證進行中」。
 2. Ticket 的 Git 連線與授權 Acceptance 曾未勾選；已依現有證據勾選。
 
-目前可推送文件驗證自動部署；不得在取得後續 push 證據前宣稱整合全部驗收。推送後補查 Deployment，再由 Owner 依 L3 規範最終核准。
+上述發現已修正。主 Agent 後續推送 `e2c9f55d5f84a5ab22c1843cba8938808caa0b88`，Vercel [部署紀錄](https://vercel.com/psycho909s-projects/house-search/PVtVwp9bZcVXW8r93kkkiYLkTakv)顯示對應 `main`、Production、`READY`；此部署證據由主 Agent 補查，非 Auditor 親自驗證。獨立 Auditor 再次檢查結案文件後，要求 Owner 對 `READY`／404 結果明確最終核准；Owner 已在本 Session 回覆「接受此結果並結案」。
 
 ## Verification limit
 

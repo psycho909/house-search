@@ -4,7 +4,7 @@
 
 ## Vercel 部署
 
-本倉庫的 `main` 已連接 [Vercel 專案](https://vercel.com/psycho909s-projects/house-search)，Production 網址為 [house-search-iota.vercel.app](https://house-search-iota.vercel.app/)。目前沒有網站入口，根路徑會顯示 404；Vercel 部署成功只代表 Git 建置管線可運作，不代表搜尋器已上線。後續 `main` push 的自動部署驗證進行中；實際狀態與 commit 請在 Vercel Deployments 核對。
+本倉庫的 `main` 已連接 [Vercel 專案](https://vercel.com/psycho909s-projects/house-search)，Production 網址為 [house-search-iota.vercel.app](https://house-search-iota.vercel.app/)。目前沒有網站入口，根路徑會顯示 404；Vercel 部署成功只代表 Git 建置管線可運作，不代表搜尋器已上線。已以 `main` 推送驗證 Vercel 自動建立 Production deployment；後續更新的實際狀態與 commit 請在 [Deployments](https://vercel.com/psycho909s-projects/house-search/deployments) 核對。
 
 ## 快速開始
 

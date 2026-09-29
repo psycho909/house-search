@@ -4,7 +4,6 @@
 
 ## Now
 
-- [ ] Vercel Git 自動部署連線 — Ticket: [20260929-vercel-git-integration](tickets/20260929-vercel-git-integration.md)
 - [ ] Fixture 搜尋垂直路徑 — Ticket: [20260929-fixture-search-slice](tickets/20260929-fixture-search-slice.md)
 
 ## Next

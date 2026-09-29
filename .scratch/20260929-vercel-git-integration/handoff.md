@@ -4,13 +4,13 @@
 
 - Task: Vercel Git 自動部署連線
 - Authority / Ticket: [tickets/20260929-vercel-git-integration.md](../../tickets/20260929-vercel-git-integration.md)
-- Status: in_progress
+- Status: done
 - Updated: 2026-09-29
 - Source environment: Codex desktop, Windows, `D:\Codex\house-search`
 - Branch: main
 - Remote: https://github.com/psycho909/house-search.git
 - Base commit: `f3d136ab236ea24fcbcd41e1a6ccdd3337bbbecf`
-- Working tree: 本次文件更新待提交；接手時以 `git status --short --branch` 重新核對
+- Working tree: 結案文件待提交；推送後應為乾淨
 - Sync target: origin/main
 
 ## Goal and Acceptance
@@ -23,7 +23,7 @@
 
 ## Remaining
 
-推送本次文件更新，核對新 commit 是否自動產生 Production deployment 並記錄狀態；完成 Independent Audit 與 Owner 驗收。
+無。Owner 已明確接受 `READY`／公開首頁 404 結果；本 handoff 作為完成快照保存。
 
 ## Decisions
 
@@ -35,12 +35,12 @@
 
 ## Verification
 
-Vercel 專案 Overview：`https://vercel.com/psycho909s-projects/house-search`；Git 設定：`https://vercel.com/psycho909s-projects/house-search/settings/git`；首次 deployment `https://vercel.com/psycho909s-projects/house-search/6ZX3wJoWuuAQdsMDMvV5w1VRY9qp` 為 `READY`、來源 `main`、commit `f3d136a`。Production 網址根路徑顯示 `404 NOT_FOUND`。
+Vercel 專案 Overview：`https://vercel.com/psycho909s-projects/house-search`；Git 設定：`https://vercel.com/psycho909s-projects/house-search/settings/git`。首次 deployment `https://vercel.com/psycho909s-projects/house-search/6ZX3wJoWuuAQdsMDMvV5w1VRY9qp` 為 `READY`、來源 `main`、commit `f3d136a`。後續 `main` push `e2c9f55d5f84a5ab22c1843cba8938808caa0b88` 對應 Vercel Production deployment `https://vercel.com/psycho909s-projects/house-search/PVtVwp9bZcVXW8r93kkkiYLkTakv`，狀態 `READY`。Production 網址根路徑仍為 `404 NOT_FOUND`。獨立稽核報告位於 `reports/audit/20260929-vercel-git-integration.md`。
 
 ## Blockers
 
-尚無阻塞；等待 Git push 的自動部署證據與 Independent Audit。
+無。
 
 ## Next Action
 
-驗證文件後推送 main，檢查 Vercel 是否自動部署新 commit。
+完成。後續網站入口依 Fixture UI 工作票施工。
